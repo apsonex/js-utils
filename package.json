@@ -1,0 +1,26 @@
+{
+  "name": "@apsonex/js-utils",
+  "version": "1.0.1",
+  "main": "dist/apx-js-utils.umd.js",
+  "module": "dist/apx-js-utils.es.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/apx-js-utils.es.js",
+      "require": "./dist/apx-js-utils.umd.js"
+    }
+  },
+  "devDependencies": {
+    "lodash": "^4.17.21",
+    "plural": "^1.1.0",
+    "pluralize": "^8.0.0",
+    "slugify": "^1.6.6",
+    "vite": "^6.3.5"
+  }
+}
