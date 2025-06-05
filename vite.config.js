@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+    test: {
+        environment: 'happy-dom',
+      },
     build: {
         lib: {
             entry: 'src/index.js',

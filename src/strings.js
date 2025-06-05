@@ -1,6 +1,6 @@
 import slugify from 'slugify';
 import plural from 'plural';
-import { camelCase } from 'lodash';
+import { camelCase, snakeCase } from 'lodash';
 
 export class Str {
     constructor(value) {
@@ -64,11 +64,17 @@ export class Str {
     }
 
     screamCase() {
-        return this.value.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toUpperCase();
+        return Str.of(
+            this.value
+                .toUpperCase()
+                .replace(/[^A-Z0-9]+/g, "_")  // Replace non-alphanumerics with underscores
+                .replace(/_+/g, "_")          // Collapse multiple underscores
+                .replace(/^_+|_+$/g, "")     // Trim leading/trailing underscores
+        );
     }
 
     snakeCase() {
-        return Str.of(slugify(this.value.toLowerCase(), { replacement: '_', lower: true }));
+        return Str.of(snakeCase(this.value));
     }
 
     startCase(prefix) {
@@ -120,7 +126,7 @@ export class Str {
     }
 
     slug(separator = '-') {
-        return Str.of(slugify(this.value, { lower: true, replacement: separator }));
+        return Str.of(slugify(this.value, { lower: true, replacement: separator, strict: true }));
     }
 
     startsWith(prefix) {
@@ -147,7 +153,8 @@ export class Str {
             .replace(/\s{2,}/g, ' ')       // Replace multiple spaces with a single space
             .replace(/\n/g, '')            // Remove newlines
             .replace(/>\s+</g, '><')       // Remove spaces between tags
-            .replace(/<!--.*?-->/g, '');
+            .replace(/<!--.*?-->/g, '')
+            .trim();
     }
 
     toString() {

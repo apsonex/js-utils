@@ -1,6 +1,6 @@
 # @apsonex/js-utils
 
-> A small, useful utility collection for JavaScript/ESM projects — includes string helpers, DOM utilities, a simple localStorage-based caching system, and an event bridge between iframes and parent windows.
+> A small, useful utility collection for JavaScript/ESM projects — includes string helpers, DOM utilities, a localStorage-based cache, event communication layer, and pipeline processing.
 
 ---
 
@@ -8,6 +8,12 @@
 
 ```bash
 npm install @apsonex/js-utils
+```
+
+Or using Yarn:
+
+```bash
+yarn add @apsonex/js-utils
 ```
 
 ---
@@ -24,6 +30,7 @@ import {
   loadScript,
   loadStyle,
   Events,
+  Pipeline,
 } from '@apsonex/js-utils';
 ```
 
@@ -32,17 +39,17 @@ import {
 ## 📚 Features
 
 ### 🔡 String Utilities (`str`)
-Powerful string helper chainable class.
+Chainable utility class for common string operations.
 
 ```js
-str("hello world").kebabCase().toString(); // "hello-world"
-str("some/some.txt").afterLast("/").toString(); // "some.txt"
+str("hello world").kebab().toString(); // "hello-world"
+str("some/filename.txt").afterLast("/").toString(); // "filename.txt"
 str("html content").minifyHtml(); // removes whitespace, comments
 ```
 
 Chainable methods:
 - `after`, `afterLast`, `before`, `beforeLast`
-- `kebabCase`, `camelCase`, `snakeCase`, `screamCase`, `snakeCase`, `slug`, `plural`, `singular`
+- `kebab`, `camel`, `snake`, `slug`, `plural`, `singular`
 - `replaceFirst`, `replaceLast`, `replaceArray`
 - `limit`, `words`, `start`, `finish`
 - `contains`, `containsAll`, `is`, `startsWith`, `endsWith`
@@ -51,7 +58,7 @@ Chainable methods:
 ---
 
 ### 📦 Local Cache (`JsCache`)
-Simple localStorage cache with TTL (time to live) support.
+Simple localStorage cache with TTL support.
 
 ```js
 const cache = new JsCache().init({ prefix: 'my_app:' });
@@ -60,7 +67,7 @@ cache.put('user', { name: 'John' }, '10m');
 cache.remember('settings', '1hr', () => fetchSettings());
 ```
 
-Supports TTL formats:
+TTL formats:
 - `60s`, `10m`, `1hr`, `1d`, `1mo`, `1yr`, or numeric seconds
 
 Methods:
@@ -72,20 +79,20 @@ Methods:
 
 ---
 
-### 🧩 DOM Utilities (`dom`)
-Lightweight, useful browser DOM helpers.
+### 🧩 DOM Utilities
+Useful browser DOM helpers.
 
 ```js
 bodyScrollDisable(); // disables body scroll
-bodyScrollEnable();  // enables it back
+bodyScrollEnable();  // re-enables scroll
 
-isIframe(); // true if running inside iframe
+isIframe(); // true if in an iframe
 ```
 
 ---
 
-### 📜 `loadScript` & `loadStyle`
-Dynamically load external scripts or stylesheets.
+### 📜 Dynamic Script & Style Loaders
+Load external assets with callbacks and deduplication.
 
 ```js
 await loadScript('https://example.com/script.js', {
@@ -99,66 +106,61 @@ await loadStyle('https://example.com/style.css', {
 });
 ```
 
-They support:
-- Auto-skip if already loaded
-- `onLoad`, `onError` callbacks
-- Custom attributes like `crossorigin`, `media`, `title`
+Features:
+- Prevents duplicate loading
+- Supports `onLoad`, `onError`, `crossorigin`, `type`, etc.
 
 ---
 
-### 🔁 Iframe Events (`Events`)
-Two-way communication between parent window and iframe using `CustomEvent`.
-
-#### ✅ Features
-- Dispatch events across iframe and parent
-- Auto-generated `.dispatch()` and `.listen()` methods
-- Works with or without iframe
-- IDE autocompletion friendly
-
-#### 📌 Usage with iframe
+### 📡 Events System (`Events`)
+Handles safe cross-window event communication (parent ↔ iframe) with unified API.
 
 ```js
-const triggers = {
-  editorReady: '',
-  toggleSidebar: '',
-  darkModeEnabled: '',
-};
+const triggers = ['ready', 'parentReady'];
 
 const events = new Events()
-  .iframe({ iframe: document.getElementById('my-iframe') })
+  .resolveIframeVia(() => store().iframe)
   .triggers(triggers)
   .init();
 
-events.editorReady.dispatch({ status: 'ready' });
-
-events.darkModeEnabled.listen((data) => {
-  console.log('Dark mode changed:', data);
-});
+events.ready.dispatch({ hello: 'world' });
+events.ready.listen((data) => console.log('Received:', data));
 ```
 
-#### 📌 Usage without iframe
+API:
+- `.setIframe(iframeElement)`
+- `.resolveIframeVia(() => iframeElement)`
+- `.triggers(['eventOne', 'eventTwo'])`
+- `.init()` returns trigger handlers
+
+Each trigger provides:
+- `.dispatch(data)`
+- `.listen(callback)`
+
+---
+
+### 🔁 Pipeline Processor (`Pipeline`)
+Chain synchronous or async tasks for consistent data flow.
 
 ```js
-const events = new Events()
-  .triggers({
-    saveComplete: '',
-    errorOccurred: '',
-  })
-  .init();
+const pipeline = new Pipeline()
+  .pipe([
+    (data) => data + 1,
+    async (data) => data * 2,
+    (data) => `Final: ${data}`,
+  ]);
 
-events.saveComplete.dispatch({ id: 123 });
-events.errorOccurred.listen((err) => {
-  console.error(err);
-});
+pipeline.process(2).then(console.log); // Final: 6
 ```
 
-#### 💡 IDE Typing
+Methods:
+- `pipe(fn | fn[])` — add processing steps
+- `empty()` — reset pipeline
+- `process(input)` — run through all stages
 
-```js
-/** @typedef {ReturnType<Events['init']>} EventMap */
-/** @type {EventMap} */
-const events = new Events().triggers(triggers).init();
-```
+Each stage can be:
+- A function `(input) => output`
+- A static value that skips input
 
 ---
 
@@ -168,7 +170,9 @@ const events = new Events().triggers(triggers).init();
 npm run build
 ```
 
-Outputs ES module and UMD builds in `/dist`.
+Outputs:
+- ES Module (`dist/*.es.js`)
+- UMD Module (`dist/*.umd.js`)
 
 ---
 
