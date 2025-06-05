@@ -1,6 +1,6 @@
 # @apsonex/js-utils
 
-> A small, useful utility collection for JavaScript/ESM projects — includes string helpers, DOM utilities, and a simple localStorage-based caching system.
+> A small, useful utility collection for JavaScript/ESM projects — includes string helpers, DOM utilities, a simple localStorage-based caching system, and an event bridge between iframes and parent windows.
 
 ---
 
@@ -8,12 +8,6 @@
 
 ```bash
 npm install @apsonex/js-utils
-```
-
-Or using Yarn:
-
-```bash
-yarn add @apsonex/js-utils
 ```
 
 ---
@@ -29,6 +23,7 @@ import {
   isIframe,
   loadScript,
   loadStyle,
+  Events,
 } from '@apsonex/js-utils';
 ```
 
@@ -40,18 +35,20 @@ import {
 Powerful string helper chainable class.
 
 ```js
-str("hello world").kebab().toString(); // "hello-world"
-str("some/filename.txt").afterLast("/").toString(); // "filename.txt"
+str("hello world").kebabCase().toString(); // "hello-world"
+str("some/some.txt").afterLast("/").toString(); // "some.txt"
 str("html content").minifyHtml(); // removes whitespace, comments
 ```
 
 Chainable methods:
 - `after`, `afterLast`, `before`, `beforeLast`
-- `kebab`, `camel`, `snake`, `slug`, `plural`, `singular`
+- `kebabCase`, `camelCase`, `snakeCase`, `screamCase`, `snakeCase`, `slug`, `plural`, `singular`
 - `replaceFirst`, `replaceLast`, `replaceArray`
 - `limit`, `words`, `start`, `finish`
 - `contains`, `containsAll`, `is`, `startsWith`, `endsWith`
 - `title`, `minifyHtml`, `explode`
+
+---
 
 ### 📦 Local Cache (`JsCache`)
 Simple localStorage cache with TTL (time to live) support.
@@ -73,6 +70,8 @@ Methods:
 - `has(key)`
 - `forget(key)`
 
+---
+
 ### 🧩 DOM Utilities (`dom`)
 Lightweight, useful browser DOM helpers.
 
@@ -82,6 +81,8 @@ bodyScrollEnable();  // enables it back
 
 isIframe(); // true if running inside iframe
 ```
+
+---
 
 ### 📜 `loadScript` & `loadStyle`
 Dynamically load external scripts or stylesheets.
@@ -102,6 +103,62 @@ They support:
 - Auto-skip if already loaded
 - `onLoad`, `onError` callbacks
 - Custom attributes like `crossorigin`, `media`, `title`
+
+---
+
+### 🔁 Iframe Events (`Events`)
+Two-way communication between parent window and iframe using `CustomEvent`.
+
+#### ✅ Features
+- Dispatch events across iframe and parent
+- Auto-generated `.dispatch()` and `.listen()` methods
+- Works with or without iframe
+- IDE autocompletion friendly
+
+#### 📌 Usage with iframe
+
+```js
+const triggers = {
+  editorReady: '',
+  toggleSidebar: '',
+  darkModeEnabled: '',
+};
+
+const events = new Events()
+  .iframe({ iframe: document.getElementById('my-iframe') })
+  .triggers(triggers)
+  .init();
+
+events.editorReady.dispatch({ status: 'ready' });
+
+events.darkModeEnabled.listen((data) => {
+  console.log('Dark mode changed:', data);
+});
+```
+
+#### 📌 Usage without iframe
+
+```js
+const events = new Events()
+  .triggers({
+    saveComplete: '',
+    errorOccurred: '',
+  })
+  .init();
+
+events.saveComplete.dispatch({ id: 123 });
+events.errorOccurred.listen((err) => {
+  console.error(err);
+});
+```
+
+#### 💡 IDE Typing
+
+```js
+/** @typedef {ReturnType<Events['init']>} EventMap */
+/** @type {EventMap} */
+const events = new Events().triggers(triggers).init();
+```
 
 ---
 

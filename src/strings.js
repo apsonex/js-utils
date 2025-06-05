@@ -35,10 +35,6 @@ export class Str {
         return Str.of(index === -1 ? this.value : this.value.substring(0, index));
     }
 
-    camel() {
-        return Str.of(camelCase(this.value));
-    }
-
     contains(substring) {
         return this.value.includes(substring);
     }
@@ -59,8 +55,24 @@ export class Str {
         return this.value === string;
     }
 
-    kebab() {
+    camelCase() {
+        return Str.of(camelCase(this.value));
+    }
+
+    kebabCase() {
         return Str.of(slugify(this.value, { lower: true }));
+    }
+
+    screamCase() {
+        return this.value.replace(/([a-z0-9])([A-Z])/g, '$1_$2').toUpperCase();
+    }
+
+    snakeCase() {
+        return Str.of(slugify(this.value.toLowerCase(), { replacement: '_', lower: true }));
+    }
+
+    startCase(prefix) {
+        return this.value.startsWith(prefix) ? this : Str.of(prefix + this.value);
     }
 
     limit(limit) {
@@ -109,17 +121,6 @@ export class Str {
 
     slug(separator = '-') {
         return Str.of(slugify(this.value, { lower: true, replacement: separator }));
-        // return Str.of(
-        //     makeSlug(this.value, separator),
-        // );
-    }
-
-    snake() {
-        return Str.of(slugify(this.value.toLowerCase(), { replacement: '_', lower: true }));
-    }
-
-    start(prefix) {
-        return this.value.startsWith(prefix) ? this : Str.of(prefix + this.value);
     }
 
     startsWith(prefix) {
