@@ -4105,9 +4105,7 @@ class P_ {
          * Listen for the event in this window.
          * @param {(data: any) => void} callback
          */
-        listen: (b) => {
-          document.addEventListener(f, (M) => b(M.detail));
-        }
+        listen: (b) => document.addEventListener(f, (M) => b(M.detail))
       };
     }), this.generated;
   }
