@@ -52,11 +52,11 @@ str("HELLO_WORLD").sentenseCase().toString(); // "Hello World"
 
 - `after`, `afterLast`, `before`, `beforeLast`
 - `kebabCase`, `camelCase`, `snakeCase`, `slug`, `plural`, `singular`
+- `screamCase`, `titleCase`, `capitalizeWords`
 - `replaceFirst`, `replaceLast`, `replaceArray`
 - `limit`, `words`, `startCase`, `finish`
 - `contains`, `containsAll`, `is`, `startsWith`, `endsWith`
 - `title`, `minifyHtml`, `explode`
-- `screamCase`, `sentenseCase`, `capitalizeWords`
 
 **Notable Additions:**
 - `sentenseCase()`: Transforms strings like `"HELLO_WORLD"` into `"Hello World"`
