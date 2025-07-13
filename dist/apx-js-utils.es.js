@@ -4059,23 +4059,18 @@ class P_ {
   }
   /**
    * Define a resolver to lazily get the iframe element.
-   * @param {() => HTMLIFrameElement | null} resolver
-   * @returns {Events}
    */
   resolveIframeVia(p) {
     return this.iframeResolver = p, this;
   }
   /**
    * Directly set the iframe element.
-   * @param {HTMLIFrameElement} iframe
-   * @returns {Events}
    */
   setIframe(p) {
     return this._iframeElement = p, this;
   }
   /**
    * Resolves and returns the iframe element if set or lazily resolved.
-   * @returns {HTMLIFrameElement | null}
    */
   iframe() {
     if (!this._iframeElement && typeof this.iframeResolver == "function")
@@ -4088,38 +4083,32 @@ class P_ {
   }
   /**
    * Define all event triggers.
-   * @param {string[]} triggers
-   * @returns {Events}
    */
   triggers(p) {
     return this.triggersList = p, this;
   }
   /**
    * Finalizes the event system and returns mapped event handlers.
-   * @returns {Record<string, { dispatch: Function, listen: Function }>}
    */
   init() {
     return this.triggersList.forEach((p) => {
       const f = ds(p).kebabCase().toString(), y = ds(p).screamCase().toString();
       this.eventNames[y] = f, this.generated[p] = {
-        /**
-         * Dispatch event to all relevant windows.
-         * @param {any} data
-         */
         dispatch: (b = {}) => {
           this._dispatchEverywhere(f, b);
         },
-        /**
-         * Listen for the event in this window.
-         * @param {(data: any) => void} callback
-         */
         listen: (b) => {
-          const B = (D) => b(D.detail);
+          const B = (D) => {
+            b(D.detail);
+          };
           return document.addEventListener(f, B), () => document.removeEventListener(f, B);
         }
       };
     }), this.generated;
   }
+  /**
+   * Internal method to dispatch event to self, parent, and iframe.
+   */
   _dispatchEverywhere(p, f = {}) {
     const y = new CustomEvent(p, { detail: f });
     if (document.dispatchEvent(y), vs())
