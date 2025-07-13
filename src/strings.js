@@ -77,7 +77,7 @@ export class Str {
         );
     }
 
-    sentenseCase() {
+    titleCase() {
         return Str.of(
             this.resolveValue()
                 .toUpperCase()

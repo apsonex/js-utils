@@ -3957,7 +3957,7 @@ class J {
       // Trim leading/trailing underscores
     );
   }
-  sentenseCase() {
+  titleCase() {
     return J.of(
       this.resolveValue().toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/_+/g, "_").replace(/^_+|_+$/g, "").toLowerCase().replace(/_/ig, " ").replace(/\b\w/g, (p) => p.toUpperCase())
     );
