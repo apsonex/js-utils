@@ -101,7 +101,10 @@ export class Events {
          * @param {(data: any) => void} callback
          */
         listen: (callback) => {
-          return document.addEventListener(kebab, (e) => callback(e.detail));
+          // return document.addEventListener(kebab, (e) => callback(e.detail));
+          const handler = (e) => callback(e.detail);
+          document.addEventListener(kebab, handler);
+          return () => document.removeEventListener(kebab, handler); // <== cleanup function
         },
       };
     });
