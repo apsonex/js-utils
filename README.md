@@ -1,5 +1,5 @@
 # @apsonex/js-utils
-ONE
+Two
 > A small, useful utility collection for JavaScript/ESM projects — includes string helpers, DOM utilities, a localStorage-based cache, event communication layer, and pipeline processing.
 
 ---
