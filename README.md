@@ -42,18 +42,25 @@ import {
 Chainable utility class for common string operations.
 
 ```js
-str("hello world").kebab().toString(); // "hello-world"
+str("hello world").kebabCase().toString(); // "hello-world"
 str("some/filename.txt").afterLast("/").toString(); // "filename.txt"
 str("html content").minifyHtml(); // removes whitespace, comments
+str("HELLO_WORLD").sentenseCase().toString(); // "Hello World"
 ```
 
-Chainable methods:
+**Chainable Methods:**
+
 - `after`, `afterLast`, `before`, `beforeLast`
-- `kebab`, `camel`, `snake`, `slug`, `plural`, `singular`
+- `kebabCase`, `camelCase`, `snakeCase`, `slug`, `plural`, `singular`
 - `replaceFirst`, `replaceLast`, `replaceArray`
-- `limit`, `words`, `start`, `finish`
+- `limit`, `words`, `startCase`, `finish`
 - `contains`, `containsAll`, `is`, `startsWith`, `endsWith`
 - `title`, `minifyHtml`, `explode`
+- `screamCase`, `sentenseCase`, `capitalizeWords`
+
+**Notable Additions:**
+- `sentenseCase()`: Transforms strings like `"HELLO_WORLD"` into `"Hello World"`
+- `capitalizeWords()`: Capitalizes the first letter of each word
 
 ---
 
