@@ -1,6 +1,6 @@
 {
   "name": "@apsonex/js-utils",
-  "version": "1.0.9",
+  "version": "1.0.8",
   "main": "dist/apx-js-utils.umd.js",
   "module": "dist/apx-js-utils.es.js",
   "type": "module",
